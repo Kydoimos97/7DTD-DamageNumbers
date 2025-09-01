@@ -6,10 +6,10 @@ namespace Config
 {
     public interface IConfigurationService
     {
-        // Debug settings
+        // Debug
         bool EnableDebugLogging { get; set; }
 
-        // Damage number settings
+        // Damage numbers
         int MinimumDamageThreshold { get; set; }
         float DamageNumberCooldown { get; set; }
         int FontSize { get; set; }
@@ -17,13 +17,13 @@ namespace Config
         float FloatSpeed { get; set; }
         Vector3 TextOffset { get; set; }
 
-        // Color settings
+        // Colors
         Color NormalDamageColor { get; set; }
         Color HeadshotDamageColor { get; set; }
         Color KillDamageColor { get; set; }
         Color HeadshotKillDamageColor { get; set; }
 
-        // Crosshair marker settings
+        // Crosshair markers
         bool EnableCrosshairMarkers { get; set; }
         float MarkerDuration { get; set; }
         int MarkerFontSize { get; set; }
@@ -36,7 +36,7 @@ namespace Config
         Color HeadshotMarkerColor { get; set; }
         Color HeadshotKillMarkerColor { get; set; }
 
-        // Advanced settings
+        // Advanced
         bool PlayerDamageOnly { get; set; }
         bool RandomizePosition { get; set; }
         float PositionRandomness { get; set; }
@@ -45,13 +45,13 @@ namespace Config
         float MaxScale { get; set; }
         int MaxDamageForScale { get; set; }
 
-        // Text styling settings
+        // Text styling
         bool EnableOutline { get; set; }
         Color OutlineColor { get; set; }
         float OutlineThickness { get; set; }
         string FontName { get; set; }
 
-        // Configuration management
+        // Lifecycle
         void LoadConfiguration();
         void SaveConfiguration();
         void ResetToDefaults();
@@ -59,496 +59,200 @@ namespace Config
         string GetSettingsSummary();
         void ValidateSettings();
     }
+
     public static class ConfigurationService
     {
         private static IConfigurationService _current;
+        public static IConfigurationService Current => _current ??= Create();
 
-        public static IConfigurationService Current => _current ?? (_current = CreateConfigService());
-
-        private static IConfigurationService CreateConfigService()
+        private static IConfigurationService Create()
         {
             if (GearsManager.IsGearsAvailable)
             {
                 AdnLogger.Log("Using Gears configuration service");
                 return new GearsConfigurationService();
             }
-            else
-            {
-                AdnLogger.Log("Using XML configuration service");
-                return new XmlConfigurationService();
-            }
+
+            AdnLogger.Log("Using XML configuration service");
+            return new XmlConfigurationService();
         }
-        public static void RefreshConfigurationService()
-        {
-            _current = null;
-            _current = CreateConfigService();
-        }
+
+        public static void RefreshConfigurationService() => _current = Create();
+
         public static void CleanupStatics()
         {
             _current = null;
             AdnLogger.Debug("ConfigurationService static references cleaned up");
         }
     }
+
+    // Keep all validation / summary logic here so neither service needs to call ConfigurationService.Current
+    internal static class SettingsHelpers
+    {
+        public static void ApplyDefaults()
+        {
+            // Mirror your defaults in SettingsState
+            SettingsState.EnableDebugLogging = true;
+
+            SettingsState.MinimumDamageThreshold = 2;
+            SettingsState.DamageNumberCooldown = 0.0f;
+            SettingsState.FontSize = 14;
+            SettingsState.TextLifetime = 1.5f;
+            SettingsState.FloatSpeed = 0.85f;
+            SettingsState.TextOffset = new Vector3(0.0f, 1.5f, 0.0f);
+
+            SettingsState.NormalDamageColor = new Color(0.580f, 0.580f, 0.580f);
+            SettingsState.HeadshotDamageColor = new Color(0.722f, 0.522f, 0.067f);
+            SettingsState.KillDamageColor = new Color(0.459f, 0.024f, 0.024f);
+            SettingsState.HeadshotKillDamageColor = new Color(0.278f, 0.008f, 0.008f);
+
+            SettingsState.EnableCrosshairMarkers = true;
+            SettingsState.MarkerDuration = 0.35f;
+            SettingsState.MarkerFontSize = 28;
+            SettingsState.NormalHitMarker = "x";
+            SettingsState.KillMarker = "x";
+            SettingsState.HeadshotMarker = "x";
+            SettingsState.HeadshotKillMarker = "X";
+            SettingsState.NormalMarkerColor = new Color(0.580f, 0.580f, 0.580f);
+            SettingsState.KillMarkerColor = new Color(0.459f, 0.024f, 0.024f);
+            SettingsState.HeadshotMarkerColor = new Color(0.722f, 0.522f, 0.067f);
+            SettingsState.HeadshotKillMarkerColor = new Color(0.278f, 0.008f, 0.008f);
+
+            SettingsState.PlayerDamageOnly = true;
+            SettingsState.RandomizePosition = true;
+            SettingsState.PositionRandomness = 0.25f;
+            SettingsState.ScaleTextByDamage = true;
+            SettingsState.MinScale = 0.5f;
+            SettingsState.MaxScale = 2.0f;
+            SettingsState.MaxDamageForScale = 100;
+
+            SettingsState.EnableOutline = true;
+            SettingsState.OutlineColor = Color.black;
+            SettingsState.OutlineThickness = 1.0f;
+            SettingsState.FontName = "Arial";
+        }
+
+        public static void Validate()
+        {
+            if (SettingsState.FontSize < 6) SettingsState.FontSize = 6;
+            if (SettingsState.TextLifetime < 0.05f) SettingsState.TextLifetime = 0.05f;
+            if (SettingsState.FloatSpeed < 0f) SettingsState.FloatSpeed = 0f;
+            if (SettingsState.MarkerDuration < 0f) SettingsState.MarkerDuration = 0f;
+            if (SettingsState.MinScale <= 0f) SettingsState.MinScale = 0.1f;
+            if (SettingsState.MaxScale < SettingsState.MinScale) SettingsState.MaxScale = SettingsState.MinScale;
+            if (SettingsState.MaxDamageForScale <= 0) SettingsState.MaxDamageForScale = 1;
+        }
+
+        public static string Summary()
+        {
+            return $"Debug:{SettingsState.EnableDebugLogging}, " +
+                   $"Font:{SettingsState.FontName} {SettingsState.FontSize}px, " +
+                   $"Lifetime:{SettingsState.TextLifetime}s, Float:{SettingsState.FloatSpeed}, " +
+                   $"Markers:{(SettingsState.EnableCrosshairMarkers ? "On" : "Off")}";
+        }
+    }
+
+    // -------- GEARS service (binds to SettingsState) --------
     public class GearsConfigurationService : IConfigurationService
     {
-        // Delegate to existing ConfigurationService.Current for now - in a full refactor, this would directly access Gears
-        public bool EnableDebugLogging
-        {
-            get => ConfigurationService.Current.EnableDebugLogging;
-            set => ConfigurationService.Current.EnableDebugLogging = value;
-        }
+        // All properties ONLY touch SettingsState — safe for UI bindings
+        public bool EnableDebugLogging { get => SettingsState.EnableDebugLogging; set => SettingsState.EnableDebugLogging = value; }
+        public int MinimumDamageThreshold { get => SettingsState.MinimumDamageThreshold; set => SettingsState.MinimumDamageThreshold = value; }
+        public float DamageNumberCooldown { get => SettingsState.DamageNumberCooldown; set => SettingsState.DamageNumberCooldown = value; }
+        public int FontSize { get => SettingsState.FontSize; set => SettingsState.FontSize = value; }
+        public float TextLifetime { get => SettingsState.TextLifetime; set => SettingsState.TextLifetime = value; }
+        public float FloatSpeed { get => SettingsState.FloatSpeed; set => SettingsState.FloatSpeed = value; }
+        public Vector3 TextOffset { get => SettingsState.TextOffset; set => SettingsState.TextOffset = value; }
 
-        public int MinimumDamageThreshold
-        {
-            get => ConfigurationService.Current.MinimumDamageThreshold;
-            set => ConfigurationService.Current.MinimumDamageThreshold = value;
-        }
+        public Color NormalDamageColor { get => SettingsState.NormalDamageColor; set => SettingsState.NormalDamageColor = value; }
+        public Color HeadshotDamageColor { get => SettingsState.HeadshotDamageColor; set => SettingsState.HeadshotDamageColor = value; }
+        public Color KillDamageColor { get => SettingsState.KillDamageColor; set => SettingsState.KillDamageColor = value; }
+        public Color HeadshotKillDamageColor { get => SettingsState.HeadshotKillDamageColor; set => SettingsState.HeadshotKillDamageColor = value; }
 
-        public float DamageNumberCooldown
-        {
-            get => ConfigurationService.Current.DamageNumberCooldown;
-            set => ConfigurationService.Current.DamageNumberCooldown = value;
-        }
+        public bool EnableCrosshairMarkers { get => SettingsState.EnableCrosshairMarkers; set => SettingsState.EnableCrosshairMarkers = value; }
+        public float MarkerDuration { get => SettingsState.MarkerDuration; set => SettingsState.MarkerDuration = value; }
+        public int MarkerFontSize { get => SettingsState.MarkerFontSize; set => SettingsState.MarkerFontSize = value; }
+        public string NormalHitMarker { get => SettingsState.NormalHitMarker; set => SettingsState.NormalHitMarker = value; }
+        public string KillMarker { get => SettingsState.KillMarker; set => SettingsState.KillMarker = value; }
+        public string HeadshotMarker { get => SettingsState.HeadshotMarker; set => SettingsState.HeadshotMarker = value; }
+        public string HeadshotKillMarker { get => SettingsState.HeadshotKillMarker; set => SettingsState.HeadshotKillMarker = value; }
+        public Color NormalMarkerColor { get => SettingsState.NormalMarkerColor; set => SettingsState.NormalMarkerColor = value; }
+        public Color KillMarkerColor { get => SettingsState.KillMarkerColor; set => SettingsState.KillMarkerColor = value; }
+        public Color HeadshotMarkerColor { get => SettingsState.HeadshotMarkerColor; set => SettingsState.HeadshotMarkerColor = value; }
+        public Color HeadshotKillMarkerColor { get => SettingsState.HeadshotKillMarkerColor; set => SettingsState.HeadshotKillMarkerColor = value; }
 
-        public int FontSize
-        {
-            get => ConfigurationService.Current.FontSize;
-            set => ConfigurationService.Current.FontSize = value;
-        }
+        public bool PlayerDamageOnly { get => SettingsState.PlayerDamageOnly; set => SettingsState.PlayerDamageOnly = value; }
+        public bool RandomizePosition { get => SettingsState.RandomizePosition; set => SettingsState.RandomizePosition = value; }
+        public float PositionRandomness { get => SettingsState.PositionRandomness; set => SettingsState.PositionRandomness = value; }
+        public bool ScaleTextByDamage { get => SettingsState.ScaleTextByDamage; set => SettingsState.ScaleTextByDamage = value; }
+        public float MinScale { get => SettingsState.MinScale; set => SettingsState.MinScale = value; }
+        public float MaxScale { get => SettingsState.MaxScale; set => SettingsState.MaxScale = value; }
+        public int MaxDamageForScale { get => SettingsState.MaxDamageForScale; set => SettingsState.MaxDamageForScale = value; }
 
-        public float TextLifetime
-        {
-            get => ConfigurationService.Current.TextLifetime;
-            set => ConfigurationService.Current.TextLifetime = value;
-        }
-
-        public float FloatSpeed
-        {
-            get => ConfigurationService.Current.FloatSpeed;
-            set => ConfigurationService.Current.FloatSpeed = value;
-        }
-
-        public Vector3 TextOffset
-        {
-            get => ConfigurationService.Current.TextOffset;
-            set => ConfigurationService.Current.TextOffset = value;
-        }
-
-        public Color NormalDamageColor
-        {
-            get => ConfigurationService.Current.NormalDamageColor;
-            set => ConfigurationService.Current.NormalDamageColor = value;
-        }
-
-        public Color HeadshotDamageColor
-        {
-            get => ConfigurationService.Current.HeadshotDamageColor;
-            set => ConfigurationService.Current.HeadshotDamageColor = value;
-        }
-
-        public Color KillDamageColor
-        {
-            get => ConfigurationService.Current.KillDamageColor;
-            set => ConfigurationService.Current.KillDamageColor = value;
-        }
-
-        public Color HeadshotKillDamageColor
-        {
-            get => ConfigurationService.Current.HeadshotKillDamageColor;
-            set => ConfigurationService.Current.HeadshotKillDamageColor = value;
-        }
-
-        public bool EnableCrosshairMarkers
-        {
-            get => ConfigurationService.Current.EnableCrosshairMarkers;
-            set => ConfigurationService.Current.EnableCrosshairMarkers = value;
-        }
-
-        public float MarkerDuration
-        {
-            get => ConfigurationService.Current.MarkerDuration;
-            set => ConfigurationService.Current.MarkerDuration = value;
-        }
-
-        public int MarkerFontSize
-        {
-            get => ConfigurationService.Current.MarkerFontSize;
-            set => ConfigurationService.Current.MarkerFontSize = value;
-        }
-
-        public string NormalHitMarker
-        {
-            get => ConfigurationService.Current.NormalHitMarker;
-            set => ConfigurationService.Current.NormalHitMarker = value;
-        }
-
-        public string KillMarker
-        {
-            get => ConfigurationService.Current.KillMarker;
-            set => ConfigurationService.Current.KillMarker = value;
-        }
-
-        public string HeadshotMarker
-        {
-            get => ConfigurationService.Current.HeadshotMarker;
-            set => ConfigurationService.Current.HeadshotMarker = value;
-        }
-
-        public string HeadshotKillMarker
-        {
-            get => ConfigurationService.Current.HeadshotKillMarker;
-            set => ConfigurationService.Current.HeadshotKillMarker = value;
-        }
-
-        public Color NormalMarkerColor
-        {
-            get => ConfigurationService.Current.NormalMarkerColor;
-            set => ConfigurationService.Current.NormalMarkerColor = value;
-        }
-
-        public Color KillMarkerColor
-        {
-            get => ConfigurationService.Current.KillMarkerColor;
-            set => ConfigurationService.Current.KillMarkerColor = value;
-        }
-
-        public Color HeadshotMarkerColor
-        {
-            get => ConfigurationService.Current.HeadshotMarkerColor;
-            set => ConfigurationService.Current.HeadshotMarkerColor = value;
-        }
-
-        public Color HeadshotKillMarkerColor
-        {
-            get => ConfigurationService.Current.HeadshotKillMarkerColor;
-            set => ConfigurationService.Current.HeadshotKillMarkerColor = value;
-        }
-
-        public bool PlayerDamageOnly
-        {
-            get => ConfigurationService.Current.PlayerDamageOnly;
-            set => ConfigurationService.Current.PlayerDamageOnly = value;
-        }
-
-        public bool RandomizePosition
-        {
-            get => ConfigurationService.Current.RandomizePosition;
-            set => ConfigurationService.Current.RandomizePosition = value;
-        }
-
-        public float PositionRandomness
-        {
-            get => ConfigurationService.Current.PositionRandomness;
-            set => ConfigurationService.Current.PositionRandomness = value;
-        }
-
-        public bool ScaleTextByDamage
-        {
-            get => ConfigurationService.Current.ScaleTextByDamage;
-            set => ConfigurationService.Current.ScaleTextByDamage = value;
-        }
-
-        public float MinScale
-        {
-            get => ConfigurationService.Current.MinScale;
-            set => ConfigurationService.Current.MinScale = value;
-        }
-
-        public float MaxScale
-        {
-            get => ConfigurationService.Current.MaxScale;
-            set => ConfigurationService.Current.MaxScale = value;
-        }
-
-        public int MaxDamageForScale
-        {
-            get => ConfigurationService.Current.MaxDamageForScale;
-            set => ConfigurationService.Current.MaxDamageForScale = value;
-        }
-
-        public bool EnableOutline
-        {
-            get => ConfigurationService.Current.EnableOutline;
-            set => ConfigurationService.Current.EnableOutline = value;
-        }
-
-        public Color OutlineColor
-        {
-            get => ConfigurationService.Current.OutlineColor;
-            set => ConfigurationService.Current.OutlineColor = value;
-        }
-
-        public float OutlineThickness
-        {
-            get => ConfigurationService.Current.OutlineThickness;
-            set => ConfigurationService.Current.OutlineThickness = value;
-        }
-
-        public string FontName
-        {
-            get => ConfigurationService.Current.FontName;
-            set => ConfigurationService.Current.FontName = value;
-        }
+        public bool EnableOutline { get => SettingsState.EnableOutline; set => SettingsState.EnableOutline = value; }
+        public Color OutlineColor { get => SettingsState.OutlineColor; set => SettingsState.OutlineColor = value; }
+        public float OutlineThickness { get => SettingsState.OutlineThickness; set => SettingsState.OutlineThickness = value; }
+        public string FontName { get => SettingsState.FontName; set => SettingsState.FontName = value; }
 
         public void LoadConfiguration()
         {
+            // If you persist through XML even with Gears, let XmlHandler populate SettingsState.
             XmlHandler.LoadConfigAsync();
         }
 
-        public void SaveConfiguration()
-        {
-            XmlHandler.SaveSettings();
-        }
-
-        public void ResetToDefaults()
-        {
-            ConfigurationService.Current.ResetToDefaults();
-        }
-
-        public string GetConfigurationInfo()
-        {
-            return "Configuration: Gears in-game UI (Options > Mods > Angel's Enhanced Damage Numbers)";
-        }
-
-        public string GetSettingsSummary()
-        {
-            return ConfigurationService.Current.GetSettingsSummary();
-        }
-
-        public void ValidateSettings()
-        {
-            ConfigurationService.Current.ValidateSettings();
-        }
+        public void SaveConfiguration() => XmlHandler.SaveSettings();
+        public void ResetToDefaults() => SettingsHelpers.ApplyDefaults();
+        public string GetConfigurationInfo() => "Configuration: Gears in-game UI (Options > Mods > Angel's Enhanced Damage Numbers)";
+        public string GetSettingsSummary() => SettingsHelpers.Summary();
+        public void ValidateSettings() => SettingsHelpers.Validate();
     }
+
+    // -------- XML service (also binds to SettingsState) --------
     public class XmlConfigurationService : IConfigurationService
     {
-        // Delegate to existing ConfigurationService.Current for now - in a full refactor, this would directly access XML
-        public bool EnableDebugLogging
-        {
-            get => ConfigurationService.Current.EnableDebugLogging;
-            set => ConfigurationService.Current.EnableDebugLogging = value;
-        }
+        public bool EnableDebugLogging { get => SettingsState.EnableDebugLogging; set => SettingsState.EnableDebugLogging = value; }
+        public int MinimumDamageThreshold { get => SettingsState.MinimumDamageThreshold; set => SettingsState.MinimumDamageThreshold = value; }
+        public float DamageNumberCooldown { get => SettingsState.DamageNumberCooldown; set => SettingsState.DamageNumberCooldown = value; }
+        public int FontSize { get => SettingsState.FontSize; set => SettingsState.FontSize = value; }
+        public float TextLifetime { get => SettingsState.TextLifetime; set => SettingsState.TextLifetime = value; }
+        public float FloatSpeed { get => SettingsState.FloatSpeed; set => SettingsState.FloatSpeed = value; }
+        public Vector3 TextOffset { get => SettingsState.TextOffset; set => SettingsState.TextOffset = value; }
 
-        public int MinimumDamageThreshold
-        {
-            get => ConfigurationService.Current.MinimumDamageThreshold;
-            set => ConfigurationService.Current.MinimumDamageThreshold = value;
-        }
+        public Color NormalDamageColor { get => SettingsState.NormalDamageColor; set => SettingsState.NormalDamageColor = value; }
+        public Color HeadshotDamageColor { get => SettingsState.HeadshotDamageColor; set => SettingsState.HeadshotDamageColor = value; }
+        public Color KillDamageColor { get => SettingsState.KillDamageColor; set => SettingsState.KillDamageColor = value; }
+        public Color HeadshotKillDamageColor { get => SettingsState.HeadshotKillDamageColor; set => SettingsState.HeadshotKillDamageColor = value; }
 
-        public float DamageNumberCooldown
-        {
-            get => ConfigurationService.Current.DamageNumberCooldown;
-            set => ConfigurationService.Current.DamageNumberCooldown = value;
-        }
+        public bool EnableCrosshairMarkers { get => SettingsState.EnableCrosshairMarkers; set => SettingsState.EnableCrosshairMarkers = value; }
+        public float MarkerDuration { get => SettingsState.MarkerDuration; set => SettingsState.MarkerDuration = value; }
+        public int MarkerFontSize { get => SettingsState.MarkerFontSize; set => SettingsState.MarkerFontSize = value; }
+        public string NormalHitMarker { get => SettingsState.NormalHitMarker; set => SettingsState.NormalHitMarker = value; }
+        public string KillMarker { get => SettingsState.KillMarker; set => SettingsState.KillMarker = value; }
+        public string HeadshotMarker { get => SettingsState.HeadshotMarker; set => SettingsState.HeadshotMarker = value; }
+        public string HeadshotKillMarker { get => SettingsState.HeadshotKillMarker; set => SettingsState.HeadshotKillMarker = value; }
+        public Color NormalMarkerColor { get => SettingsState.NormalMarkerColor; set => SettingsState.NormalMarkerColor = value; }
+        public Color KillMarkerColor { get => SettingsState.KillMarkerColor; set => SettingsState.KillMarkerColor = value; }
+        public Color HeadshotMarkerColor { get => SettingsState.HeadshotMarkerColor; set => SettingsState.HeadshotMarkerColor = value; }
+        public Color HeadshotKillMarkerColor { get => SettingsState.HeadshotKillMarkerColor; set => SettingsState.HeadshotKillMarkerColor = value; }
 
-        public int FontSize
-        {
-            get => ConfigurationService.Current.FontSize;
-            set => ConfigurationService.Current.FontSize = value;
-        }
+        public bool PlayerDamageOnly { get => SettingsState.PlayerDamageOnly; set => SettingsState.PlayerDamageOnly = value; }
+        public bool RandomizePosition { get => SettingsState.RandomizePosition; set => SettingsState.RandomizePosition = value; }
+        public float PositionRandomness { get => SettingsState.PositionRandomness; set => SettingsState.PositionRandomness = value; }
+        public bool ScaleTextByDamage { get => SettingsState.ScaleTextByDamage; set => SettingsState.ScaleTextByDamage = value; }
+        public float MinScale { get => SettingsState.MinScale; set => SettingsState.MinScale = value; }
+        public float MaxScale { get => SettingsState.MaxScale; set => SettingsState.MaxScale = value; }
+        public int MaxDamageForScale { get => SettingsState.MaxDamageForScale; set => SettingsState.MaxDamageForScale = value; }
 
-        public float TextLifetime
-        {
-            get => ConfigurationService.Current.TextLifetime;
-            set => ConfigurationService.Current.TextLifetime = value;
-        }
+        public bool EnableOutline { get => SettingsState.EnableOutline; set => SettingsState.EnableOutline = value; }
+        public Color OutlineColor { get => SettingsState.OutlineColor; set => SettingsState.OutlineColor = value; }
+        public float OutlineThickness { get => SettingsState.OutlineThickness; set => SettingsState.OutlineThickness = value; }
+        public string FontName { get => SettingsState.FontName; set => SettingsState.FontName = value; }
 
-        public float FloatSpeed
-        {
-            get => ConfigurationService.Current.FloatSpeed;
-            set => ConfigurationService.Current.FloatSpeed = value;
-        }
-
-        public Vector3 TextOffset
-        {
-            get => ConfigurationService.Current.TextOffset;
-            set => ConfigurationService.Current.TextOffset = value;
-        }
-
-        public Color NormalDamageColor
-        {
-            get => ConfigurationService.Current.NormalDamageColor;
-            set => ConfigurationService.Current.NormalDamageColor = value;
-        }
-
-        public Color HeadshotDamageColor
-        {
-            get => ConfigurationService.Current.HeadshotDamageColor;
-            set => ConfigurationService.Current.HeadshotDamageColor = value;
-        }
-
-        public Color KillDamageColor
-        {
-            get => ConfigurationService.Current.KillDamageColor;
-            set => ConfigurationService.Current.KillDamageColor = value;
-        }
-
-        public Color HeadshotKillDamageColor
-        {
-            get => ConfigurationService.Current.HeadshotKillDamageColor;
-            set => ConfigurationService.Current.HeadshotKillDamageColor = value;
-        }
-
-        public bool EnableCrosshairMarkers
-        {
-            get => ConfigurationService.Current.EnableCrosshairMarkers;
-            set => ConfigurationService.Current.EnableCrosshairMarkers = value;
-        }
-
-        public float MarkerDuration
-        {
-            get => ConfigurationService.Current.MarkerDuration;
-            set => ConfigurationService.Current.MarkerDuration = value;
-        }
-
-        public int MarkerFontSize
-        {
-            get => ConfigurationService.Current.MarkerFontSize;
-            set => ConfigurationService.Current.MarkerFontSize = value;
-        }
-
-        public string NormalHitMarker
-        {
-            get => ConfigurationService.Current.NormalHitMarker;
-            set => ConfigurationService.Current.NormalHitMarker = value;
-        }
-
-        public string KillMarker
-        {
-            get => ConfigurationService.Current.KillMarker;
-            set => ConfigurationService.Current.KillMarker = value;
-        }
-
-        public string HeadshotMarker
-        {
-            get => ConfigurationService.Current.HeadshotMarker;
-            set => ConfigurationService.Current.HeadshotMarker = value;
-        }
-
-        public string HeadshotKillMarker
-        {
-            get => ConfigurationService.Current.HeadshotKillMarker;
-            set => ConfigurationService.Current.HeadshotKillMarker = value;
-        }
-
-        public Color NormalMarkerColor
-        {
-            get => ConfigurationService.Current.NormalMarkerColor;
-            set => ConfigurationService.Current.NormalMarkerColor = value;
-        }
-
-        public Color KillMarkerColor
-        {
-            get => ConfigurationService.Current.KillMarkerColor;
-            set => ConfigurationService.Current.KillMarkerColor = value;
-        }
-
-        public Color HeadshotMarkerColor
-        {
-            get => ConfigurationService.Current.HeadshotMarkerColor;
-            set => ConfigurationService.Current.HeadshotMarkerColor = value;
-        }
-
-        public Color HeadshotKillMarkerColor
-        {
-            get => ConfigurationService.Current.HeadshotKillMarkerColor;
-            set => ConfigurationService.Current.HeadshotKillMarkerColor = value;
-        }
-
-        public bool PlayerDamageOnly
-        {
-            get => ConfigurationService.Current.PlayerDamageOnly;
-            set => ConfigurationService.Current.PlayerDamageOnly = value;
-        }
-
-        public bool RandomizePosition
-        {
-            get => ConfigurationService.Current.RandomizePosition;
-            set => ConfigurationService.Current.RandomizePosition = value;
-        }
-
-        public float PositionRandomness
-        {
-            get => ConfigurationService.Current.PositionRandomness;
-            set => ConfigurationService.Current.PositionRandomness = value;
-        }
-
-        public bool ScaleTextByDamage
-        {
-            get => ConfigurationService.Current.ScaleTextByDamage;
-            set => ConfigurationService.Current.ScaleTextByDamage = value;
-        }
-
-        public float MinScale
-        {
-            get => ConfigurationService.Current.MinScale;
-            set => ConfigurationService.Current.MinScale = value;
-        }
-
-        public float MaxScale
-        {
-            get => ConfigurationService.Current.MaxScale;
-            set => ConfigurationService.Current.MaxScale = value;
-        }
-
-        public int MaxDamageForScale
-        {
-            get => ConfigurationService.Current.MaxDamageForScale;
-            set => ConfigurationService.Current.MaxDamageForScale = value;
-        }
-
-        public bool EnableOutline
-        {
-            get => ConfigurationService.Current.EnableOutline;
-            set => ConfigurationService.Current.EnableOutline = value;
-        }
-
-        public Color OutlineColor
-        {
-            get => ConfigurationService.Current.OutlineColor;
-            set => ConfigurationService.Current.OutlineColor = value;
-        }
-
-        public float OutlineThickness
-        {
-            get => ConfigurationService.Current.OutlineThickness;
-            set => ConfigurationService.Current.OutlineThickness = value;
-        }
-
-        public string FontName
-        {
-            get => ConfigurationService.Current.FontName;
-            set => ConfigurationService.Current.FontName = value;
-        }
-
-        public void LoadConfiguration()
-        {
-            XmlHandler.LoadConfig();
-        }
-
-        public void SaveConfiguration()
-        {
-            AdnLogger.Debug("XML configuration is read-only at runtime. Modify the config file and restart.");
-        }
-
-        public void ResetToDefaults()
-        {
-            ConfigurationService.Current.ResetToDefaults();
-        }
-
-        public string GetConfigurationInfo()
-        {
-            return "Configuration: XML file (edit ConfigurationService.Current.xml in mod folder)";
-        }
-
-        public string GetSettingsSummary()
-        {
-            return ConfigurationService.Current.GetSettingsSummary();
-        }
-
-        public void ValidateSettings()
-        {
-            ConfigurationService.Current.ValidateSettings();
-        }
+        public void LoadConfiguration() => XmlHandler.LoadConfig();
+        public void SaveConfiguration() => AdnLogger.Debug("XML configuration is read-only at runtime. Modify the config file and restart.");
+        public void ResetToDefaults() => SettingsHelpers.ApplyDefaults();
+        public string GetConfigurationInfo() => "Configuration: XML file (edit ConfigurationService.Current.xml in mod folder)";
+        public string GetSettingsSummary() => SettingsHelpers.Summary();
+        public void ValidateSettings() => SettingsHelpers.Validate();
     }
 }

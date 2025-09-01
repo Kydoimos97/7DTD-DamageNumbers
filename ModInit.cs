@@ -23,16 +23,24 @@ public class ModInit : IModApi
         {
             AdnLogger.Debug("ModInit called - Starting Enhanced Damage Numbers initialization");
 
-            // Initialize logging first so we can log everything else
+            // 1) Bring up logging (default ON so we can see early errors; real flag set after config load)
             InitializeLogging();
 
-            // Initialize configuration system with error boundary
-            GearsManager.InitializeConfiguration();
+            // 2) Load configuration via provider into SettingsState (XML or Gears-backed provider)
+            var cfg = Config.ConfigurationService.Current;
+            cfg.LoadConfiguration();
+            cfg.ValidateSettings();
 
-            // Initialize managers with error boundary
+            // 3) Apply the debug flag from SettingsState exactly once
+            AdnLogger.SetEnabled(Config.SettingsState.EnableDebugLogging);
+
+            // 4) If Gears exists, wire the UI now (no XML I/O here)
+            Gears.GearsManager.InitializeConfiguration();
+
+            // 5) Init managers (coroutines, etc.)
             InitializeManagers();
 
-            // Validate initialization
+            // 6) Final self-checks (fonts, services present, etc.)
             ValidateInitialization();
 
             IsInitialized = true;
@@ -56,6 +64,7 @@ public class ModInit : IModApi
             throw; // Re-throw to let the game know initialization failed
         }
     }
+
 
     private void InitializeLogging()
     {
