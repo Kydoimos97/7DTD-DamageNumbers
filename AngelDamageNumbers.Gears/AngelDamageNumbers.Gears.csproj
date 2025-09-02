@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>     <!-- match Unity/.NET Framework -->
+        <OutputType>Library</OutputType>              <!-- prevents CS5001 -->
+        <Nullable>enable</Nullable>                   <!-- or 'disable' if you prefer -->
+        <LangVersion>latest</LangVersion>
+
+        <!-- Pick ONE strategy for assembly attributes -->
+        <!-- Option A: let SDK generate from these fields -->
+        <Company>AngelDamageNumbers</Company>
+        <Product>AngelDamageNumbers</Product>
+        <AssemblyTitle>AngelDamageNumbers.Gears</AssemblyTitle>
+        <Version>1.0.0</Version>
+        <FileVersion>1.0.0.0</FileVersion>
+        <InformationalVersion>1.0.0</InformationalVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="Gears">
+            <HintPath>..\lib\Gears.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="GearsAPI">
+            <HintPath>..\lib\GearsAPI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+
+        <!-- Unity basics -->
+        <Reference Include="UnityEngine">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+    
+    
+    <PropertyGroup>
+        <DefineConstants>$(DefineConstants);GEARS</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AngelDamageNumbers\AngelDamageNumbers.csproj" />
+    </ItemGroup>
+
+</Project>
