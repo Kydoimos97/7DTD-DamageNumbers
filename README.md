@@ -1,96 +1,148 @@
 # Angel's Damage Numbers v3.0
 
-A floating damage numbers mod for 7 Days to Die that shows visual feedback when you damage enemies. Built with defensive coding principles to enhance your gaming experience without adding complexity or breaking your setup.
+<p align="center">
+  <img src="Resources/Banner.png" alt="Angel’s Damage Numbers Banner" width="720">
+</p>
+
+A floating damage numbers mod for **7 Days to Die** that provides instant visual feedback during combat.
+Built with defensive coding principles to ensure reliability, stability, and performance without complicating your setup.
+
+---
+
+## Quick Links
+- [Download on Nexus](https://www.nexusmods.com/7daystodie/mods/8478)
+- [Optional Gears Mod (for in-game UI)](https://www.nexusmods.com/7daystodie/mods/4017)
+- [License](#license)
+- [Changelog](#changelog)
+
+---
 
 ## Features
 
-- **Floating Damage Numbers**: Customizable colors for normal hits, headshots, kills, and headshot kills
-- **Crosshair Hit Markers**: Screen-center indicators that flash on successful hits
-- **TextMeshPro Rendering**: High-quality fonts with outline support for better visibility
-- **Dual Configuration**: Traditional XML files + optional in-game UI via Gears mod
-- **Performance Optimized**: Rate limiting, smart culling, and efficient memory management
-- **No Corpse Spam**: Damage numbers only appear on living targets and damaged sourced by the player
-- **Memory Safe**: Proper cleanup prevents performance degradation over time
+- **Floating Damage Numbers** — Customizable colors for normal hits, headshots, kills, and headshot kills
+- **Crosshair Hit Markers** — Screen-center indicators that flash on successful hits
+- **TextMeshPro Rendering** — High-quality fonts with outline support for better visibility
+- **Dual Configuration** — Traditional XML files plus optional in-game UI (via Gears mod)
+- **Performance Optimized** — Smart culling, cooldowns, and efficient memory usage
+- **No Corpse Spam** — Numbers only appear on living targets and actual player damage
+- **Memory Safe** — Proper cleanup prevents long-term degradation
+
+---
 
 ## Philosophy: Modding as Enrichment
 
-This mod embodies the principle that **modding should enrich gaming, not complicate it**:
+This mod is designed around the idea that **modding should enrich gameplay, not complicate it**:
 
-- **Zero Learning Curve**: Works perfectly with default settings - no configuration required
-- **Graceful Degradation**: Missing dependencies result in simpler functionality, never crashes
-- **No Prerequisites**: Core features work without any other mods or special setup
-- **Respectful Enhancement**: Adds value without changing how you play the game
+- Works instantly with sensible defaults
+- Gracefully degrades when dependencies are missing — no crashes
+- No prerequisites required
+- Enhances feedback without changing gameplay balance
 
-The goal is **immediate enrichment with zero friction**. You should get visual feedback that makes combat more satisfying without needing to learn new systems, troubleshoot compatibility issues, or change your gameplay habits.
+The goal is **immediate enrichment with zero friction**.
 
-### Technical Philosophy
+---
 
-- **Defensive by Design**: Comprehensive error handling with automatic fallbacks
-- **Dependency Isolation**: Optional features (like Gears integration) are completely isolated
-- **Fail-Safe Defaults**: Every setting has a sensible default that works well
-- **Progressive Enhancement**: Basic XML config works great, Gears UI adds convenience
+## Technical Philosophy
+
+- **Defensive by Design** — Extensive error handling and fallback mechanisms
+- **Dependency Isolation** — Gears integration is optional and fully separated
+- **Fail-Safe Defaults** — Every setting has a working baseline
+- **Progressive Enhancement** — XML configs stand alone; Gears UI adds convenience
+
+---
 
 ## Installation
 
-1. Download compiled binaries from: [Nexus](https://www.nexusmods.com/7daystodie/mods/8478)
-1. Extract to `Mods/`
-2. Disable EAC (required for all DLL mods)
-3. **That's it** - the mod works immediately
-4. Optional: Install [Gears](https://www.nexusmods.com/7daystodie/mods/4017) for in-game configuration
+1. [Download the mod](https://www.nexusmods.com/7daystodie/mods/8478)
+2. Extract to the `Mods/` folder
+3. Disable **EAC** (required for all DLL mods)
+4. Launch the game — the mod works immediately
+5. *(Optional)* Install [Gears](https://www.nexusmods.com/7daystodie/mods/4017) for in-game configuration
+
+---
 
 ## Configuration
 
-### Automatic (Recommended)
-The mod creates sensible defaults automatically. Most users never need to change anything.
+### Automatic (Default)
+- Sensible defaults are applied automatically.
+- No user input required for basic functionality.
 
-### In-Game UI (Optional)
-With [Gears](https://www.nexusmods.com/7daystodie/mods/4017) installed:
-- Go to **Options > Mods > Angel's Damage Numbers**
-- Use color pickers, sliders, and toggles
-- Changes apply instantly - no restart required
+### In-Game UI (Optional, requires Gears)
+
+#### Advanced Settings
+<img src="Resources/AdvancedSettings.png" alt="Advanced Settings UI" width="600">
+
+Toggle debug logging, restrict numbers to player-only damage, or randomize position for more dynamic effects.
+
+---
+
+#### Color Pickers
+<img src="Resources/ColorPickers.png" alt="Damage Number Color Pickers" width="600">
+
+Full RGB + hex color control for every damage type: normal, headshot, kill, and headshot kill.
+
+---
+
+#### Crosshair Settings
+<img src="Resources/CrossHairSettings.png" alt="Crosshair Hit Marker Settings" width="600">
+
+Customize hit markers at the center of your crosshair. Adjust duration, size, and styles for each hit type.
+
+---
+
+#### Outline Settings
+<img src="Resources/OutlineSettings.png" alt="Text Outline Settings" width="600">
+
+Enable outlines around damage numbers for maximum visibility, with adjustable thickness and color control.
+
+With Gears installed, configure the mod via **Options > Mods > Angel's Damage Numbers**.
+Settings include color pickers, sliders, and toggles. Changes apply instantly without restart.
+
+---
 
 ### XML File (Traditional)
-Edit `Mods/Angel_DamageNumbers/AngelDamageNumbersConfig.xml` for advanced customization.
+Advanced users can edit:
+```
+
+Mods/Angel\_DamageNumbers/AngelDamageNumbersConfig.xml
+
+```
+
+---
 
 ## Architecture Highlights
 
-- **Shim Pattern**: Gears integration is completely separate - core mod never depends on it
-- **Automatic Fallbacks**: Font loading, camera detection, configuration - everything has fallbacks
-- **Error Boundaries**: Exceptions in one area don't crash the entire mod
-- **Clean Lifecycle**: Proper initialization and cleanup prevent memory leaks
+- **Shim Pattern** — Gears integration is optional and isolated
+- **Automatic Fallbacks** — Font loading, config, and camera detection all degrade gracefully
+- **Error Boundaries** — Failures in one area won’t crash the mod
+- **Clean Lifecycle** — Proper initialization and cleanup ensures stability
 
-## Troubleshooting
-
-**Not seeing damage numbers?**
-- Enable debug logging in config and check F1 console
-- Verify `MinimumDamageThreshold` isn't too high
-- Check that `PlayerDamageOnly` matches your use case
-
-**Performance issues?**
-- Reduce `TextLifetime` or increase `DamageNumberCooldown`
-- The mod is optimized, but high-damage weapons can create many numbers
+---
 
 ## License
-
 MIT License
 
-## Contributing
+---
 
+## Contributing
 1. Fork the repository
 2. Create a feature branch
-3. Follow the defensive coding principles
+3. Follow defensive coding principles
 4. Submit a pull request
 
-**Code Philosophy**: Prioritize user experience over technical purity. Graceful degradation, fail-safe defaults, and comprehensive error handling. The mod should make games better, never worse.
+**Guideline:** Always prioritize stability and user experience. Defaults must be safe, errors must degrade gracefully.
+
+---
 
 ## Changelog
 
 ### v3.0.0
 - Added optional Gears integration with in-game configuration UI
-- Implemented TextMeshPro rendering with outline support for better visibility
+- Implemented TextMeshPro rendering with outline support
 - Fixed memory leaks and improved long-term performance
-- Removed damage numbers on corpses/dead entities (reduces visual noise)
-- Added automatic XML configuration migration from older versions
-- Enhanced error handling with graceful fallbacks throughout the system
-- Improved default settings for better out-of-box experience
-- Restructured architecture for better maintainability and extensibility
+- Suppressed damage numbers for corpses/dead entities
+- Added automatic XML migration from older versions
+- Enhanced error handling and graceful fallbacks
+- Improved default settings
+- Refactored architecture for maintainability
+```
