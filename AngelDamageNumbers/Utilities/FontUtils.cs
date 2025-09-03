@@ -42,12 +42,12 @@ namespace AngelDamageNumbers.Utilities
             return GetDefaultFont();
         }
 
-        public static TMP_FontAsset GetSelectedFont(string displayName = null)
+        public static TMP_FontAsset GetSelectedFont(string displayName = null!)
         {
             return GetDefaultFont();
         }
 
-        public static TMP_FontAsset GetMarkerFontForSymbol(string symbol, string displayName = null)
+        public static TMP_FontAsset GetMarkerFontForSymbol(string symbol, string displayName = null!)
         {
             return GetDefaultFont();
         }
