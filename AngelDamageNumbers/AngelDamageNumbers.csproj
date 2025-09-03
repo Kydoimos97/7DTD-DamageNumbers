@@ -64,5 +64,8 @@
             <Private>False</Private>
         </Reference>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Assets\Resources\" />
+    </ItemGroup>
 
 </Project>
