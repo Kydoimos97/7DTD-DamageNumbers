@@ -1,0 +1,21 @@
+# Build outputs
+bin/
+obj/
+Dist/
+lib/
+
+# Project-specific (AngelDamageNumbers and subprojects)
+AngelDamageNumbers/bin/
+AngelDamageNumbers/obj/
+AngelDamageNumbers.Gears/bin/
+AngelDamageNumbers.Gears/obj/
+
+# Debugging / symbols
+*.pdb
+
+# User-specific settings
+*.user
+.idea/
+
+# Git internals (safety: never track .git itself)
+.git/
