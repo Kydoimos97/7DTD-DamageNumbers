@@ -58,8 +58,8 @@ namespace AngelDamageNumbers.Gears
                 var coreAsm = typeof(GearsManager).Assembly.Location;
                 var baseDir = Path.GetDirectoryName(coreAsm);
 
-                // Our shim is in Mods/Angel_DamageNumbers/AngelDamageNumbers.Gears.dll
-                var shimPath = Path.Combine(baseDir ?? ".", "AngelDamageNumbers.Gears.dll");
+                // Our shim is in Mods/Angel_DamageNumbers/Gears/AngelDamageNumbers.Gears.dll
+                var shimPath = Path.Combine(baseDir ?? ".", "Gears", "AngelDamageNumbers.Gears.dll");
                 if (!File.Exists(shimPath))
                 {
                     error = $"Shim not found at {shimPath}";
