@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using AngelDamageNumbers.Config;
 using AngelDamageNumbers.UI;
 using AngelDamageNumbers.Utilities;
-using Config;
 using HarmonyLib;
 using UnityEngine;
 using Random = UnityEngine.Random;
