@@ -4,7 +4,7 @@ namespace AngelDamageNumbers.Managers
 {
     public class CoroutineManager : MonoBehaviour
     {
-        private static CoroutineManager _instance;
+        private static CoroutineManager _instance = null!;
 
         public static CoroutineManager Instance
         {
