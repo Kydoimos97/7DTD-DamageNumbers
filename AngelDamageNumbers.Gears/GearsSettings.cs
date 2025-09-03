@@ -88,23 +88,23 @@ public class GearsSettings
 
     private void CreateTabs(IModGlobalSettings settingsInstance)
     {
-        _numberSettingsTab   = settingsInstance.CreateTab("Numbers", "Number");
-        _crosshairSettingsTab = settingsInstance.CreateTab("Crosshair", "Crosshair");
-        _fontSettings        = settingsInstance.CreateTab("Font", "Font");
-        _advancedTab         = settingsInstance.CreateTab("Advanced", "Advanced");
+        _numberSettingsTab   = settingsInstance.GetOrCreateTab("AdnNumbers", "Numbers");
+        _crosshairSettingsTab = settingsInstance.GetOrCreateTab("AdnCrosshair", "Crosshairs");
+        _fontSettings        = settingsInstance.GetOrCreateTab("AdnFont", "Fonts");
+        _advancedTab         = settingsInstance.GetOrCreateTab("AdnAdvanced", "Advanced");
     }
 
     private void CreateFontSettings(IGlobalModSettingsTab settingsTab)
     {
         var fontCategory = settingsTab.GetOrCreateCategory("Font", "Font Settings");
-        var choices = FontUtils.FontMap.Keys.ToArray();
-        FontName = GearsHelper.CreateSelectorSetting(
-            fontCategory,
-            "FontName", "Font Name",
-            "Font used for floating damage numbers",
-             choices,
-            ConfigurationService.Current.FontName
-        );
+        // var choices = FontUtils.FontMap.Keys.ToArray();
+        // FontName = GearsHelper.CreateSelectorSetting(
+        //     fontCategory,
+        //     "FontName", "Font Name",
+        //     "Font used for floating damage numbers",
+        //      choices,
+        //     ConfigurationService.Current.FontName
+        // );
 
         EnableOutline = GearsHelper.CreateSwitchSetting(
             fontCategory,
@@ -123,7 +123,7 @@ public class GearsSettings
             fontCategory,
             "OutlineThickness", "Outline Thickness",
             "Thickness of text outline (higher = thicker)",
-            0.1f, 0.1f, 1.5f,
+            0.01f, 0.01f, 0.25f,
             ConfigurationService.Current.OutlineThickness);
     }
 
@@ -288,35 +288,34 @@ public class GearsSettings
     {
         var otherCategory = settingsTab.GetOrCreateCategory("Style", "Crosshair Style Settings");
 
-        var allowedSymbols = new[] { "x", "X", "×", "✖", "⚡", "●", "◉", "⊙", "➤", "♦", "✓", "★", "☠" };
 
 
         NormalHitMarker = GearsHelper.CreateSelectorSetting(
             otherCategory,
             "NormalHitMarker", "Normal Hit Marker",
             "Symbol for normal hits",
-            allowedSymbols,
+            FontUtils.SymbolPool,
             ConfigurationService.Current.NormalHitMarker);
 
         KillMarker = GearsHelper.CreateSelectorSetting(
             otherCategory,
             "KillMarker", "Kill Marker",
             "Symbol for kills",
-            allowedSymbols,
+            FontUtils.SymbolPool,
             ConfigurationService.Current.KillMarker);
 
         HeadshotMarker = GearsHelper.CreateSelectorSetting(
             otherCategory,
             "HeadshotMarker", "Headshot Marker",
             "Symbol for headshots",
-            allowedSymbols,
+            FontUtils.SymbolPool,
             ConfigurationService.Current.HeadshotMarker);
 
         HeadshotKillMarker = GearsHelper.CreateSelectorSetting(
             otherCategory,
             "HeadshotKillMarker", "Headshot Kill Marker",
             "Symbol for headshot kills",
-            allowedSymbols,
+            FontUtils.SymbolPool,
             ConfigurationService.Current.HeadshotKillMarker);
     }
 

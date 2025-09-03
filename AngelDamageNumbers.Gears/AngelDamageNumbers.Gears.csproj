@@ -25,7 +25,7 @@
             <HintPath>..\lib\GearsAPI.dll</HintPath>
             <Private>False</Private>
         </Reference>
-
+        
         <!-- Unity basics -->
         <Reference Include="UnityEngine">
             <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.dll</HintPath>
@@ -33,6 +33,10 @@
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\Unity.TextMeshPro.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>

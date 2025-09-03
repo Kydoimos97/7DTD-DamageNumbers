@@ -59,8 +59,8 @@ public static class GearsHelper
         var cat = RequireCategory(category, nameof(CreateSliderSetting));
 
         var setting = Require(
-            cat.CreateSetting<ISliderGlobalSetting>(name: key, displayKey: display),
-            $"[Gears] CreateSetting<ISliderGlobalSetting>(\"{key}\") returned null.");
+            cat.GetOrCreateSetting<ISliderGlobalSetting>(name: key, displayName: display),
+            $"[Gears] GetOrCreateSetting<ISliderGlobalSetting>(\"{key}\") returned null.");
 
         setting.TooltipKey = tooltip;
         setting.SetAllowedValues(increment, min, max);
@@ -81,8 +81,8 @@ public static class GearsHelper
         var cat = RequireCategory(category, nameof(CreateSwitchSetting));
 
         var setting = Require(
-            cat.CreateSetting<ISwitchGlobalSetting>(name: key, displayKey: display),
-            $"[Gears] CreateSetting<ISwitchGlobalSetting>(\"{key}\") returned null.");
+            cat.GetOrCreateSetting<ISwitchGlobalSetting>(name: key, displayName: display),
+            $"[Gears] GetOrCreateSetting<ISwitchGlobalSetting>(\"{key}\") returned null.");
 
         setting.TooltipKey = tooltip;
         setting.SetSwitchValues(leftValue, rightValue);
@@ -103,8 +103,8 @@ public static class GearsHelper
         var cat = RequireCategory(category, nameof(CreateSelectorSetting));
 
         var setting = Require(
-            cat.CreateSetting<ISelectorGlobalSetting>(name: key, displayKey: display),
-            $"[Gears] CreateSetting<ISelectorGlobalSetting>(\"{key}\") returned null.");
+            cat.GetOrCreateSetting<ISelectorGlobalSetting>(name: key, displayName: display),
+            $"[Gears] GetOrCreateSetting<ISelectorGlobalSetting>(\"{key}\") returned null.");
 
         setting.TooltipKey = tooltip;
         setting.SetAllowedValues(allowedValues);
