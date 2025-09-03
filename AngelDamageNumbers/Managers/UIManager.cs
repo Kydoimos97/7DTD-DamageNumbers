@@ -1,4 +1,5 @@
 using AngelDamageNumbers.Utilities;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,23 +48,22 @@ namespace AngelDamageNumbers.Managers
             return canvas;
         }
 
-        public static Text CreateStandardText(GameObject parent, string text, Font font, int fontSize, Color color, TextAnchor alignment = TextAnchor.MiddleCenter)
+        public static TextMeshProUGUI CreateStandardText(GameObject parent, string text, TMP_FontAsset font, int fontSize, Color color, TextAlignmentOptions alignment = TextAlignmentOptions.Center)
         {
-            var textComponent = parent.GetComponent<Text>();
-            if (textComponent == null) textComponent = parent.AddComponent<Text>();
+            var textComponent = parent.GetComponent<TextMeshProUGUI>();
+            if (textComponent == null) textComponent = parent.AddComponent<TextMeshProUGUI>();
 
             textComponent.text = text;
-            textComponent.font = font ?? FontUtils.GetConfiguredFont();
+            textComponent.font = font ?? FontUtils.GetConfiguredTMPFont();
             textComponent.fontSize = fontSize;
             textComponent.color = color;
             textComponent.alignment = alignment;
-            textComponent.horizontalOverflow = HorizontalWrapMode.Overflow;
-            textComponent.verticalOverflow = VerticalWrapMode.Overflow;
+            textComponent.enableAutoSizing = false;
+            textComponent.overflowMode = TextOverflowModes.Overflow;
 
-            AdnLogger.Debug($"Standard text component created - Text: '{text}', Font: {(textComponent.font != null ? "OK" : "NULL")}, Size: {fontSize}");
+            AdnLogger.Debug($"Standard TMP text component created - Text: '{text}', Font: {(textComponent.font != null ? "OK" : "NULL")}, Size: {fontSize}");
             return textComponent;
         }
-
         private static RectTransform SetupRectTransform(GameObject gameObject, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPosition)
         {
             var rectTransform = gameObject.GetComponent<RectTransform>();
