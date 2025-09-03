@@ -1,7 +1,8 @@
 using System;
 using System.Globalization;
+using AngelDamageNumbers.Config;
 using AngelDamageNumbers.Utilities;
-using Config;
+
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 // ReSharper disable UnusedParameter.Local
 
@@ -39,7 +40,7 @@ public class GearsCallBacks
 
         private void CreateCallBacks()
         {
-                        S.EnableDebugLogging.OnSettingChanged += (setting, newValue) =>
+            S.EnableDebugLogging.OnSettingChanged += (setting, newValue) =>
             {
                 ConfigurationService.Current.EnableDebugLogging = bool.Parse(newValue);
                 AdnLogger.Debug($"Debug logging {(ConfigurationService.Current.EnableDebugLogging ? "enabled" : "disabled")}");
