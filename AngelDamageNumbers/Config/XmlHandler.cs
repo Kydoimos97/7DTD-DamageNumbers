@@ -358,7 +358,20 @@ namespace AngelDamageNumbers.Config
 
         public static void SaveSettings()
         {
-            AdnLogger.Debug("XML configuration is read-only at runtime. Modify the config file and restart.");
+            try
+            {
+                AdnLogger.Debug("Saving current settings to XML");
+
+                Directory.CreateDirectory(Path.GetDirectoryName(ConfigPath) ?? string.Empty);
+                var doc = CreateConfigDocument();
+                doc.Save(ConfigPath);
+
+                AdnLogger.Debug("Settings saved to XML successfully");
+            }
+            catch (Exception ex)
+            {
+                AdnLogger.Error($"Failed to save settings to XML: {ex.Message}");
+            }
         }
 
         public static void ResetToDefaults()
