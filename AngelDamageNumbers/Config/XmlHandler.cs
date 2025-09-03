@@ -76,18 +76,15 @@ namespace AngelDamageNumbers.Config
 
         private static void LoadExistingConfig()
         {
-            // Use the smart migrator
-            var migrationResult = ConfigMigrator.MigrateConfigIfNeeded(ConfigPath);
-
-            if (migrationResult.WasMigrationNeeded)
+            // Only try migration + load if the file exists
+            if (!File.Exists(ConfigPath))
             {
-                if (migrationResult.MigrationSuccessful)
-                    AdnLogger.Log($"Config migrated successfully: {migrationResult.StartVersion} -> {migrationResult.EndVersion}");
-                else
-                    AdnLogger.Error($"Config migration failed: {migrationResult.ErrorMessage}");
+                AdnLogger.Log($"No existing config found at {ConfigPath}, using defaults.");
+                return;
+                // Now load the (possibly migrated) config normally
+
             }
 
-            // Now load the (possibly migrated) config normally
             var doc = new XmlDocument();
             doc.Load(ConfigPath);
 
@@ -269,7 +266,7 @@ namespace AngelDamageNumbers.Config
         private static void CreateTextStylingSection(XmlDocument doc, XmlElement root)
         {
             var stylingSection = doc.CreateElement("TextStyling");
-            AddElement(doc, stylingSection, "FontName", SettingsState.FontName, "Font name - use system fonts like Arial, Times New Roman, Verdana, etc.");
+            AddElement(doc, stylingSection, "FontName", SettingsState.FontName, "Font name");
             AddElement(doc, stylingSection, "EnableOutline", SettingsState.EnableOutline.ToString(), "Enable text outline for better visibility (default: true)");
             AddColorElement(doc, stylingSection, "OutlineColor", SettingsState.OutlineColor, "Outline color (default: black)");
             AddElement(doc, stylingSection, "OutlineThickness", SettingsState.OutlineThickness.ToString(CultureInfo.InvariantCulture), "Outline thickness - higher values = thicker outline (default: 1.0)");

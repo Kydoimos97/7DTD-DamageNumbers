@@ -1,5 +1,6 @@
 ﻿using System;
 using AngelDamageNumbers.Config;
+using AngelDamageNumbers.Gears;
 using AngelDamageNumbers.Managers;
 using AngelDamageNumbers.Utilities;
 using UnityEngine;
@@ -20,37 +21,55 @@ public class ModInit : IModApi
 
         try
         {
-            AdnLogger.Debug("ModInit called - Starting Enhanced Damage Numbers initialization");
+            AdnLogger.Debug("=== ModInit: Starting Enhanced Damage Numbers initialization ===");
 
-            // 1) Bring up logging (default ON so we can see early errors; real flag set after config load)
+            // 1) Bring up logging
             InitializeLogging();
 
-            // 2) Load configuration via provider into SettingsState (XML or Gears-backed provider)
-            var cfg = global::AngelDamageNumbers.Config.ConfigurationService.Current;
+            // 2) Initialize configuration service
+            AdnLogger.Debug("Initializing ConfigurationService...");
+            ConfigurationService.RefreshConfigurationService();
+            AdnLogger.Debug($"ConfigurationService created: {ConfigurationService.Current.GetType().Name}");
+
+            AdnLogger.Debug("Applying defaults to SettingsState...");
+            SettingsHelpers.ApplyDefaults();
+            AdnLogger.Debug("Defaults applied successfully");
+
+            var cfg = ConfigurationService.Current;
+
+            AdnLogger.Debug("Loading configuration...");
             cfg.LoadConfiguration();
+            AdnLogger.Debug("Configuration loaded");
+
+            AdnLogger.Debug("Validating configuration...");
             cfg.ValidateSettings();
+            AdnLogger.Debug($"Configuration validated. Summary: {cfg.GetSettingsSummary()}");
 
-            // 3) Apply the debug flag from SettingsState exactly once
+            // 3) Apply debug flag
+            AdnLogger.Debug("Applying debug logging flag from config...");
             AdnLogger.SetEnabled(SettingsState.EnableDebugLogging);
+            AdnLogger.Debug($"Debug logging is now: {(SettingsState.EnableDebugLogging ? "ENABLED" : "DISABLED")}");
 
-            // 4) If Gears exists, wire the UI now (no XML I/O here)
-            global::AngelDamageNumbers.Gears.GearsManager.InitializeConfiguration();
+            // 4) If Gears exists, wire the UI
+            AdnLogger.Debug("Initializing GearsManager configuration UI (if available)...");
+            GearsManager.InitializeConfiguration();
+            AdnLogger.Debug("GearsManager initialization complete");
 
-            // 5) Init managers (coroutines, etc.)
+            // 5) Init managers
             InitializeManagers();
 
-            // 6) Final self-checks (fonts, services present, etc.)
+            // 6) Self-checks
             ValidateInitialization();
 
             IsInitialized = true;
-            AdnLogger.Log("Enhanced Damage Numbers mod initialized successfully!");
+            AdnLogger.Log("=== Enhanced Damage Numbers mod initialized successfully! ===");
         }
         catch (Exception ex)
         {
-            AdnLogger.Error($"Critical error during mod initialization: {ex.Message}");
+            AdnLogger.Error("=== Critical error during mod initialization ===");
+            AdnLogger.Error($"Exception: {ex.GetType().Name}: {ex.Message}");
             AdnLogger.Error($"Stack trace: {ex.StackTrace}");
 
-            // Attempt graceful degradation
             try
             {
                 PerformGracefulDegradation();
@@ -60,9 +79,10 @@ public class ModInit : IModApi
                 AdnLogger.Error($"Failed to perform graceful degradation: {degradationEx.Message}");
             }
 
-            throw; // Re-throw to let the game know initialization failed
+            throw; // Let the game know initialization failed
         }
     }
+
 
 
     private void InitializeLogging()
@@ -140,7 +160,7 @@ public class ModInit : IModApi
             AdnLogger.Debug($"Debug logging validation - Enabled: {debugEnabled}");
 
             // Test font system
-            var testFont = FontUtils.GetConfiguredFont();
+            var testFont = FontUtils.GetConfiguredTMPFont();
             if (testFont == null)
                 AdnLogger.Warning("Font system returned null - text display may not work properly");
             else
@@ -174,38 +194,5 @@ public class ModInit : IModApi
         {
             AdnLogger.Error($"Graceful degradation failed: {ex.Message}");
         }
-    }
-
-    private static void Cleanup()
-    {
-        try
-        {
-            if (!IsInitialized)
-            {
-                AdnLogger.Debug("ModInit cleanup called but mod was not initialized");
-                return;
-            }
-
-            AdnLogger.Log("Starting Enhanced Damage Numbers mod cleanup");
-
-            // Use the centralized cleanup system
-            CleanUpHelper.PerformFullCleanup();
-
-            IsInitialized = false;
-            AdnLogger.Log("Enhanced Damage Numbers mod cleanup completed");
-        }
-        catch (Exception ex)
-        {
-            // Use Unity Debug in case our logging system is already cleaned up
-            Debug.LogError($"[Angel-DamageNumbers] Error during cleanup: {ex.Message}");
-        }
-    }
-
-    public static void Reinitialize(Mod modInstance)
-    {
-        if (IsInitialized) Cleanup();
-
-        var modInit = new ModInit();
-        modInit.InitMod(modInstance);
     }
 }

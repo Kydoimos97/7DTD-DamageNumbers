@@ -24,7 +24,7 @@ namespace AngelDamageNumbers
         public const float MarkerRectHeight = 100f;
 
         // Default Values (fallbacks when config fails)
-        public const string DefaultFontName = "Arial";
+        public const string DefaultFontName = "LiberationSans";
         public const int DefaultFontSize = 14;
         public const float DefaultTextLifetime = 1.5f;
         public const float DefaultFloatSpeed = 0.85f;

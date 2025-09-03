@@ -99,9 +99,9 @@ namespace AngelDamageNumbers.UI
             textObject.transform.SetParent(parent, false);
 
             var markerText = textObject.AddComponent<TextMeshProUGUI>();
-            markerText.text = text;
             markerText.color = color;
             markerText.font = FontUtils.GetMarkerFontForSymbol(text, ConfigurationService.Current.FontName);
+            markerText.text = FontUtils.GetSafeChar(text, markerText.font);
             markerText.fontSize = fontSize;
             markerText.alignment = TextAlignmentOptions.Center;
             markerText.enableAutoSizing = false;

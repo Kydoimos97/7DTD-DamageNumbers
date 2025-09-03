@@ -1,3 +1,4 @@
+using System;
 using AngelDamageNumbers.Gears;
 using AngelDamageNumbers.Utilities;
 using UnityEngine;
@@ -90,47 +91,53 @@ namespace AngelDamageNumbers.Config
     internal static class SettingsHelpers
     {
         public static void ApplyDefaults()
-        {
-            // Mirror your defaults in SettingsState
-            SettingsState.EnableDebugLogging = true;
+    {
+        // === DEBUG SETTINGS ===
+        SettingsState.EnableDebugLogging = false;
 
-            SettingsState.MinimumDamageThreshold = 2;
-            SettingsState.DamageNumberCooldown = 0.0f;
-            SettingsState.FontSize = 14;
-            SettingsState.TextLifetime = 1.5f;
-            SettingsState.FloatSpeed = 0.85f;
-            SettingsState.TextOffset = new Vector3(0.0f, 1.5f, 0.0f);
+        // === DAMAGE NUMBER SETTINGS ===
+        SettingsState.MinimumDamageThreshold = 2;
+        SettingsState.DamageNumberCooldown = 0.0f;
+        SettingsState.FontSize = 20;
+        SettingsState.TextLifetime = 1.5f;
+        SettingsState.FloatSpeed = 0.85f;
+        SettingsState.TextOffset = new Vector3(0.0f, 1.5f, 0.0f);
 
-            SettingsState.NormalDamageColor = new Color(0.580f, 0.580f, 0.580f);
-            SettingsState.HeadshotDamageColor = new Color(0.722f, 0.522f, 0.067f);
-            SettingsState.KillDamageColor = new Color(0.459f, 0.024f, 0.024f);
-            SettingsState.HeadshotKillDamageColor = new Color(0.278f, 0.008f, 0.008f);
+        // === COLOR SETTINGS ===
+        SettingsState.NormalDamageColor = new Color(0.75f, 0.75f, 0.75f);         // #949494
+        SettingsState.HeadshotDamageColor = new Color(0.7f, 0.5f, 0.0f);          // #B88511
+        SettingsState.KillDamageColor = new Color(0.5f, 0.0f, 0.0f);              // #750606
+        SettingsState.HeadshotKillDamageColor = new Color(0.4f, 0.0f, 0.0f);      // #470202
 
-            SettingsState.EnableCrosshairMarkers = true;
-            SettingsState.MarkerDuration = 0.35f;
-            SettingsState.MarkerFontSize = 28;
-            SettingsState.NormalHitMarker = "x";
-            SettingsState.KillMarker = "x";
-            SettingsState.HeadshotMarker = "x";
-            SettingsState.HeadshotKillMarker = "X";
-            SettingsState.NormalMarkerColor = new Color(0.580f, 0.580f, 0.580f);
-            SettingsState.KillMarkerColor = new Color(0.459f, 0.024f, 0.024f);
-            SettingsState.HeadshotMarkerColor = new Color(0.722f, 0.522f, 0.067f);
-            SettingsState.HeadshotKillMarkerColor = new Color(0.278f, 0.008f, 0.008f);
+        // === CROSSHAIR MARKER SETTINGS ===
+        SettingsState.EnableCrosshairMarkers = true;
+        SettingsState.MarkerDuration = 0.35f;
+        SettingsState.MarkerFontSize = 30;
+        SettingsState.NormalHitMarker = "×";
+        SettingsState.KillMarker = "×";
+        SettingsState.HeadshotMarker = "×";
+        SettingsState.HeadshotKillMarker = "X";
+        SettingsState.NormalMarkerColor = new Color(0.75f, 0.75f, 0.75f);         // #949494
+        SettingsState.KillMarkerColor = new Color(0.7f, 0.5f, 0.0f);              // #750606
+        SettingsState.HeadshotMarkerColor = new Color(0.5f, 0.0f, 0.0f);          // #B88511
+        SettingsState.HeadshotKillMarkerColor = new Color(0.4f, 0.0f, 0.0f);      // #470202
 
-            SettingsState.PlayerDamageOnly = true;
-            SettingsState.RandomizePosition = true;
-            SettingsState.PositionRandomness = 0.25f;
-            SettingsState.ScaleTextByDamage = true;
-            SettingsState.MinScale = 0.5f;
-            SettingsState.MaxScale = 2.0f;
-            SettingsState.MaxDamageForScale = 100;
+        // === ADVANCED SETTINGS ===
+        SettingsState.PlayerDamageOnly = true;
+        SettingsState.RandomizePosition = true;
+        SettingsState.PositionRandomness = 0.25f;
+        SettingsState.ScaleTextByDamage = true;
+        SettingsState.MinScale = 1.0f;
+        SettingsState.MaxScale = 2.0f;
+        SettingsState.MaxDamageForScale = 100;
 
-            SettingsState.EnableOutline = true;
-            SettingsState.OutlineColor = Color.black;
-            SettingsState.OutlineThickness = 1.0f;
-            SettingsState.FontName = "Arial";
-        }
+        // === TEXT STYLING SETTINGS ===
+        SettingsState.EnableOutline = true;
+        SettingsState.OutlineColor = Color.black;
+        SettingsState.OutlineThickness = 0.2f;
+        SettingsState.FontName = "LiberationSans";
+    }
+
 
         public static void Validate()
         {
@@ -249,10 +256,11 @@ namespace AngelDamageNumbers.Config
         public string FontName { get => SettingsState.FontName; set => SettingsState.FontName = value; }
 
         public void LoadConfiguration() => XmlHandler.LoadConfig();
-        public void SaveConfiguration() => AdnLogger.Debug("XML configuration is read-only at runtime. Modify the config file and restart.");
+        public void SaveConfiguration() => XmlHandler.SaveSettings();
         public void ResetToDefaults() => SettingsHelpers.ApplyDefaults();
         public string GetConfigurationInfo() => "Configuration: XML file (edit ConfigurationService.Current.xml in mod folder)";
         public string GetSettingsSummary() => SettingsHelpers.Summary();
         public void ValidateSettings() => SettingsHelpers.Validate();
     }
+
 }

@@ -48,6 +48,12 @@ namespace AngelDamageNumbers.Managers
                 return;
             }
 
+            if (__instance != null && __instance.IsCorpse())
+            {
+                AdnLogger.Debug($"Entity {__instance.EntityName} is dead, skipping");
+                return;
+            }
+
             // Check minimum damage threshold
             if (strength < ConfigurationService.Current.MinimumDamageThreshold)
             {
@@ -110,7 +116,7 @@ namespace AngelDamageNumbers.Managers
 
             // Show floating damage number
             AdnLogger.Debug($"Creating damage text: -{strength} at {textOffset}");
-            AdnDamageText.Show("-" + strength, __instance, textOffset, damageColor, strength);
+            AdnDamageText.Show(strength.ToString(), __instance, textOffset, damageColor, strength);
 
             // Show crosshair marker only if the player caused the damage
             if (damageDealer == primaryPlayer && ConfigurationService.Current.EnableCrosshairMarkers)
