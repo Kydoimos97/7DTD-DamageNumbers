@@ -1,9 +1,8 @@
-using AngelDamageNumbers.Config;
 using AngelDamageNumbers.Gears;
 using AngelDamageNumbers.Utilities;
 using UnityEngine;
 
-namespace Config
+namespace AngelDamageNumbers.Config
 {
     public interface IConfigurationService
     {
@@ -63,8 +62,8 @@ namespace Config
 
     public static class ConfigurationService
     {
-        private static IConfigurationService _current;
-        public static IConfigurationService Current => _current ??= Create();
+        private static IConfigurationService _current = null!;
+        public static IConfigurationService Current => _current;
 
         private static IConfigurationService Create()
         {
@@ -82,7 +81,7 @@ namespace Config
 
         public static void CleanupStatics()
         {
-            _current = null;
+            _current = null!;
             AdnLogger.Debug("ConfigurationService static references cleaned up");
         }
     }
