@@ -1,8 +1,8 @@
 using System;
+using AngelDamageNumbers.Config;
 using AngelDamageNumbers.Gears;
 using AngelDamageNumbers.Managers;
 using AngelDamageNumbers.UI;
-using Config;
 using Object = UnityEngine.Object;
 
 namespace AngelDamageNumbers.Utilities
