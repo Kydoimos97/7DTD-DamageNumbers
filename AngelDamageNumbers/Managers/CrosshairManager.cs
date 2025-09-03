@@ -1,5 +1,7 @@
-﻿using AngelDamageNumbers.Utilities;
-using Config;
+﻿using AngelDamageNumbers.Config;
+using AngelDamageNumbers.UI;
+using AngelDamageNumbers.Utilities;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,11 +9,11 @@ namespace AngelDamageNumbers.Managers
 {
     public class CrosshairManager : MonoBehaviour
     {
-        private static CrosshairManager _instance = null!;
-        private Text _markerText = null!;
+        private static CrosshairManager? _instance;
+        private TextMeshProUGUI _markerText = null!;
         private float _timer;
 
-        public static CrosshairManager Instance
+        public static CrosshairManager? Instance
         {
             get
             {
@@ -52,7 +54,7 @@ namespace AngelDamageNumbers.Managers
             if (_markerText != null)
             {
                 Destroy(_markerText.gameObject);
-                _markerText = null;
+                _markerText = null!;
             }
 
             if (_instance == this) _instance = null;
@@ -74,25 +76,17 @@ namespace AngelDamageNumbers.Managers
             var canvas = UIManager.CreateScreenSpaceCanvas(gameObject);
             AdnLogger.Debug("Canvas created via UIManager");
 
-            // Create text with defaults from ConfigurationService
-            var textObject = new GameObject("HitmarkerText");
-            textObject.transform.SetParent(canvas.transform, false);
-
-            _markerText = UIManager.CreateStandardText(
-                textObject,
+            // Use the CreateMarkerText factory method instead of manual creation
+            var textObject = DamageTextFactory.CreateMarkerText(
                 string.Empty, // start with no text
-                FontUtils.GetConfiguredFont(), // default font
-                ConfigurationService.Current.MarkerFontSize, // size from config
-                Color.clear // centered
+                canvas.transform,
+                Color.clear, // start transparent
+                ConfigurationService.Current.MarkerFontSize
             );
 
-            // Center and size using UIManager helper
-            UIManager.SetupCenteredRectTransform(
-                textObject,
-                new Vector2(AdnConstants.DefaultTextWidth, AdnConstants.DefaultTextHeight)
-            );
+            _markerText = textObject.GetComponent<TextMeshProUGUI>();
 
-            AdnLogger.Debug("CrosshairManager UI setup completed via UIManager");
+            AdnLogger.Debug("CrosshairManager UI setup completed using CreateMarkerText factory");
         }
 
         public void ShowMarker(string symbol, Color color, float duration = -1f)
@@ -114,7 +108,7 @@ namespace AngelDamageNumbers.Managers
 
             AdnLogger.Debug($"Showing crosshair marker: '{symbol}' with color ({color.r:F2}, {color.g:F2}, {color.b:F2}, {color.a:F2}) for {duration:F2}s");
 
-            _markerText.text = symbol;
+            _markerText!.text = symbol;
             _markerText.color = color;
             _timer = duration;
         }
