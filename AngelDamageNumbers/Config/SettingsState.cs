@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using AngelDamageNumbers.Utilities;
 using UnityEngine;
 
@@ -54,6 +56,27 @@ namespace AngelDamageNumbers.Config
         public static void DebugLog(string message)
         {
             if (EnableDebugLogging) AdnLogger.Debug($"{message}");
+        }
+
+        public static void ResetToDefaults()
+        {
+            // Use reflection or manual copying from a clean instance
+            var defaultType = typeof(SettingsState);
+            var fields = defaultType.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            // Reset each field to its compiled default
+            foreach (var field in fields)
+            {
+                if (field.FieldType.IsValueType)
+                    field.SetValue(null, Activator.CreateInstance(field.FieldType));
+                else if (field.FieldType == typeof(string))
+                    field.SetValue(null, "x");
+            }
+        }
+
+        public static void Initialize()
+        {
+            ResetToDefaults();
         }
     }
 }
