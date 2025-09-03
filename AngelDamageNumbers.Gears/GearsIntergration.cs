@@ -7,7 +7,6 @@ using AngelDamageNumbers.Gears;
 using GearsAPI.Settings;
 using GearsAPI.Settings.Global;
 using GearsAPI.Settings.World;
-using Config;
 using UnityEngine;
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 // ReSharper disable UnusedParameter.Local

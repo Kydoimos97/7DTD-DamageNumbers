@@ -1,6 +1,7 @@
 using System;
+using System.Linq;
+using AngelDamageNumbers.Config;
 using AngelDamageNumbers.Utilities;
-using Config;
 using GearsAPI.Settings.Global;
 
 namespace AngelDamageNumbers.Gears;
@@ -71,13 +72,13 @@ public class GearsSettings
             throw new ArgumentNullException(nameof(_advancedTab));
         }
 
-        CreateNumberColorSettings(_numberSettingsTab);
         CreateNumberBehaviorSettings(_numberSettingsTab);
         CreateNumberScaleSettings(_numberSettingsTab);
+        CreateNumberColorSettings(_numberSettingsTab);
 
         CreateCrosshairStyleSettings(_crosshairSettingsTab);
-        CreateCrosshairColorSettings(_crosshairSettingsTab);
         CreateCrosshairBehaviorSettings(_crosshairSettingsTab);
+        CreateCrosshairColorSettings(_crosshairSettingsTab);
 
         CreateFontSettings(_fontSettings);
 
@@ -96,13 +97,14 @@ public class GearsSettings
     private void CreateFontSettings(IGlobalModSettingsTab settingsTab)
     {
         var fontCategory = settingsTab.GetOrCreateCategory("Font", "Font Settings");
-
+        var choices = FontUtils.FontMap.Keys.ToArray();
         FontName = GearsHelper.CreateSelectorSetting(
             fontCategory,
             "FontName", "Font Name",
-            "Font name for all text",
-            new[] { "Arial", "Times New Roman", "Verdana", "Courier New" },
-            ConfigurationService.Current.FontName);
+            "Font used for floating damage numbers",
+             choices,
+            ConfigurationService.Current.FontName
+        );
 
         EnableOutline = GearsHelper.CreateSwitchSetting(
             fontCategory,
@@ -121,7 +123,7 @@ public class GearsSettings
             fontCategory,
             "OutlineThickness", "Outline Thickness",
             "Thickness of text outline (higher = thicker)",
-            0.1f, 0.5f, 3f,
+            0.1f, 0.1f, 1.5f,
             ConfigurationService.Current.OutlineThickness);
     }
 
@@ -162,14 +164,14 @@ public class GearsSettings
             behaviorCategory,
             "MinimumDamageThreshold", "Minimum Damage Threshold",
             "Minimum damage required to show floating numbers (0 = show all damage)",
-            1f, 0f, 100f,
+            1f, 0f, 1000f,
             ConfigurationService.Current.MinimumDamageThreshold);
 
         DamageNumberCooldown = GearsHelper.CreateSliderSetting(
             behaviorCategory,
             "DamageNumberCooldown", "Damage Number Cooldown",
             "Minimum time between damage numbers in seconds (prevents spam)",
-            0.1f, 0f, 2f,
+            0.1f, 0f, 10f,
             ConfigurationService.Current.DamageNumberCooldown);
 
         FontSize = GearsHelper.CreateSliderSetting(
@@ -183,7 +185,7 @@ public class GearsSettings
             behaviorCategory,
             "TextLifetime", "Text Lifetime",
             "How long the text is visible in seconds",
-            0.1f, 0.5f, 5f,
+            0.1f, 0.1f, 5f,
             ConfigurationService.Current.TextLifetime);
 
         FloatSpeed = GearsHelper.CreateSliderSetting(
@@ -209,7 +211,7 @@ public class GearsSettings
             otherCategory,
             "MinScale", "Minimum Scale",
             "Minimum text scale multiplier for low damage",
-            0.1f, 0.3f, 1f,
+            0.1f, 0.1f, 1f,
             ConfigurationService.Current.MinScale);
 
         MaxScale = GearsHelper.CreateSliderSetting(
@@ -223,7 +225,7 @@ public class GearsSettings
             otherCategory,
             "MaxDamageForScale", "Max Damage for Scale",
             "Damage amount that gives maximum text scale",
-            10f, 50f, 500f,
+            10f, 10f, 5000f,
             ConfigurationService.Current.MaxDamageForScale);
     }
 

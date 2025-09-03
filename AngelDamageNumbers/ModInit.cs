@@ -2,7 +2,6 @@
 using AngelDamageNumbers.Config;
 using AngelDamageNumbers.Managers;
 using AngelDamageNumbers.Utilities;
-using Config;
 using UnityEngine;
 
 namespace AngelDamageNumbers;
@@ -27,7 +26,7 @@ public class ModInit : IModApi
             InitializeLogging();
 
             // 2) Load configuration via provider into SettingsState (XML or Gears-backed provider)
-            var cfg = global::Config.ConfigurationService.Current;
+            var cfg = global::AngelDamageNumbers.Config.ConfigurationService.Current;
             cfg.LoadConfiguration();
             cfg.ValidateSettings();
 
@@ -104,7 +103,7 @@ public class ModInit : IModApi
         }
     }
 
-    private CoroutineManager InitializeCoroutineManager()
+    private CoroutineManager? InitializeCoroutineManager()
     {
         try
         {

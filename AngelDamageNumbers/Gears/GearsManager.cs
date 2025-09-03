@@ -11,7 +11,6 @@ namespace AngelDamageNumbers.Gears
     public static class GearsManager
     {
         private static bool? _gearsAvailable;
-        private static object _gearsIntegrationInstance; // type lives in shim
 
         public static bool IsGearsAvailable
         {
@@ -27,7 +26,7 @@ namespace AngelDamageNumbers.Gears
         {
             try
             {
-                string err = null; // declare upfront
+                string err = null!; // declare upfront
 
                 if (IsGearsAvailable && TryLoadGearsShim(out err))
                 {
@@ -52,7 +51,7 @@ namespace AngelDamageNumbers.Gears
 
         private static bool TryLoadGearsShim(out string error)
         {
-            error = null;
+            error = null!;
             try
             {
                 // Locate this core DLL’s folder
@@ -73,7 +72,7 @@ namespace AngelDamageNumbers.Gears
                 // e.g. namespace Gears; public class GearsIntegration : IGearsModApi
                 var t = shimAsm.GetType("Gears.GearsIntegration", throwOnError: true);
 
-                _gearsIntegrationInstance = Activator.CreateInstance(t);
+                Activator.CreateInstance(t);
 
                 AdnLogger.Debug("Gears shim loaded and integration instance created.");
                 return true;
@@ -101,7 +100,6 @@ namespace AngelDamageNumbers.Gears
 
         public static void CleanupStatics()
         {
-            _gearsIntegrationInstance = null;
             _gearsAvailable = null;
             GearsDetector.ClearCache();
             AdnLogger.Debug("GearsManager static references cleaned up");

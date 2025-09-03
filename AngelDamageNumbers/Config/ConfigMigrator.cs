@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using AngelDamageNumbers.Utilities;
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
 namespace AngelDamageNumbers.Config
 {
@@ -60,9 +61,9 @@ namespace AngelDamageNumbers.Config
                 MigrationSuccessful = false,
                 StartVersion = "Unknown",
                 EndVersion = CurrentVersion,
-                MigrationPath = null,
-                BackupPath = null,
-                ErrorMessage = null
+                MigrationPath = null!,
+                BackupPath = null!,
+                ErrorMessage = null!
             };
 
             try
@@ -312,26 +313,26 @@ namespace AngelDamageNumbers.Config
         // Data structures for migration rules
         public class MigrationRule
         {
-            public string Description;
-            public string FromVersion;
-            public string[] NewSections;
-            public string[] RemovedSettings;
-            public Dictionary<string, string> RenamedSettings;
-            public RootTagChange RootTagChanges;
-            public string ToVersion;
-            public VersionTagChange VersionTagChanges;
+            public string Description = null!;
+            public string FromVersion = null!;
+            public string[] NewSections = null!;
+            public string[] RemovedSettings = null!;
+            public Dictionary<string, string> RenamedSettings = null!;
+            public RootTagChange RootTagChanges = null!;
+            public string ToVersion = null!;
+            public VersionTagChange VersionTagChanges = null!;
         }
 
         public class RootTagChange
         {
-            public string From;
-            public string To;
+            public string From = null!;
+            public string To = null!;
         }
 
         public class VersionTagChange
         {
-            public string From;
-            public string To;
+            public string From = null!;
+            public string To = null!;
         }
     }
 }

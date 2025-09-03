@@ -171,7 +171,7 @@ namespace AngelDamageNumbers.Gears
 
         public static Assembly GetGearsAssembly()
         {
-            if (!DetectGearsAvailability() || _gearsAssemblies.Count == 0) return null;
+            if (!DetectGearsAvailability() || _gearsAssemblies.Count == 0) return null!;
             return _gearsAssemblies.FirstOrDefault(a => a.GetName().Name == "GearsAPI") ?? _gearsAssemblies[0];
         }
 
